@@ -42,3 +42,69 @@
     pulled.changed
     or
     result.exists == false
+
+- name: Create tmp grafana directorys
+  ansible.builtin.file:
+    path: "/opt/tmp-grafana/{{ item }}"
+    state: directory
+  with_items:
+    - "config/provisioning/datasources"
+    - "config/provisioning/dashboards"
+    - "data/dashboards"
+  when:
+    result.exists == false
+
+- name: Copy grafana datasources providers
+  ansible.builtin.template:
+    src: "config/provisioning/datasources/{{ item }}.yaml.j2"
+    dest: "/opt/tmp-grafana/config/provisioning/datasources/{{ item }}.yaml"
+  with_items:
+    - "prometheus"
+    - "loki"
+  when:
+    result.exists == false
+
+- name: Copy grafana dashboard providers
+  ansible.builtin.copy:
+    src: "config/provisioning/dashboards/{{ item }}.yaml"
+    dest: "/opt/tmp-grafana/config/provisioning/dashboards/{{ item }}.yaml"
+  with_items:
+    - "default"
+  when:
+    result.exists == false
+
+- name: Copy grafana dashboard data
+  ansible.builtin.copy:
+    src: "data/dashboards/{{ item }}.json"
+    dest: "/opt/tmp-grafana/data/dashboards/{{ item }}.json"
+  with_items:
+    - "grafana-metrics"
+    - "node-exporter-full"
+    - "prometheus-2-0-stats"
+    - "prometheus-stats"
+  when:
+    result.exists == false
+
+- name: Copy config files into grafana container
+  shell: docker cp /opt/tmp-grafana/config/. grafana:/etc/grafana
+  when:
+    result.exists == false
+
+- name: Copy data files into grafana container
+  shell: docker cp /opt/tmp-grafana/data/. grafana:/var/lib/grafana
+  when:
+    result.exists == false
+
+- name: Remove tmp grafana directory
+  ansible.builtin.file:
+    path: /opt/tmp-grafana
+    state: absent
+  when:
+    result.exists == false
+
+- name: Restart grafana container
+  community.docker.docker_container:
+    name: grafana
+    restart: yes
+  when:
+    result.exists == false

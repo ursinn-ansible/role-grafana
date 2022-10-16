@@ -1,2 +1,6 @@
 ---
 app_grafana_enabled: false
+app_grafana_prometheus_username: ""
+app_grafana_prometheus_password: ""
+app_grafana_loki_username: ""
+app_grafana_loki_password: ""
