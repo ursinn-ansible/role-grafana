@@ -1,4 +1,12 @@
 ---
+- name: Create grafana config volume
+  community.docker.docker_volume:
+    name: grafana_config
+
+- name: Create grafana data volume
+  community.docker.docker_volume:
+    name: grafana_data
+
 - name: Ensure grafana/grafana-enterprise image is pulled
   community.docker.docker_image:
     name: docker.io/grafana/grafana-enterprise
@@ -12,28 +20,24 @@
     state: absent
   when: pulled.changed
 
-- name: Create grafana-config volume
-  community.docker.docker_volume:
-    name: grafana-config
-
-- name: Create grafana-data volume
-  community.docker.docker_volume:
-    name: grafana-data
-
 - name: Get infos on grafana container
   community.docker.docker_container_info:
     name: grafana
   register: result
 
 - name: Create grafana container
-  ansible.builtin.shell: |
-    docker run -d \
-    --name=grafana \
-    -v grafana-data:/var/lib/grafana:Z \
-    -v grafana-config:/etc/grafana:Z \
-    --network=app-network \
-    --restart unless-stopped \
-    docker.io/grafana/grafana-enterprise
+  community.docker.docker_container:
+    image: docker.io/grafana/grafana-enterprise
+    mounts:
+     - source: grafana_config
+       target: /etc/grafana
+     - source: grafana_data
+       target: /var/lib/grafana
+    name: grafana
+    networks:
+     - name: app-network
+    restart_policy: unless-stopped
+    state: started
   when:
     pulled.changed
     or
