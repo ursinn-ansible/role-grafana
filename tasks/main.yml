@@ -66,22 +66,15 @@
 
 - name: Copy grafana dashboard providers
   ansible.builtin.copy:
-    src: "config/provisioning/dashboards/{{ item }}.yaml"
-    dest: "/opt/tmp-grafana/config/provisioning/dashboards/{{ item }}.yaml"
-  with_items:
-    - "default"
+    src: "config/provisioning/dashboards/"
+    dest: "/opt/tmp-grafana/config/provisioning/dashboards/"
   when:
     result.exists == false
 
 - name: Copy grafana dashboard data
   ansible.builtin.copy:
-    src: "data/dashboards/{{ item }}.json"
-    dest: "/opt/tmp-grafana/data/dashboards/{{ item }}.json"
-  with_items:
-    - "grafana-metrics"
-    - "node-exporter-full"
-    - "prometheus-2-0-stats"
-    - "prometheus-stats"
+    src: "data/dashboards/"
+    dest: "/opt/tmp-grafana/data/dashboards/"
   when:
     result.exists == false
 

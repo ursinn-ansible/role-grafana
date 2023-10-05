@@ -15,9 +15,9 @@ datasources:
     # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
     uid: loki
     # <string> url
-    url: https://loki.app.crazycraftland.info/
+    url: "{{ app_grafana_loki_url }}"
     # <bool> enable/disable basic auth
-    basicAuth: true
+    basicAuth: "{{ app_grafana_loki_basicAuth }}"
     # <string> basic auth username
     basicAuthUser: "{{ app_grafana_loki_username }}"
     # <bool> mark as default datasource. Max one per org
