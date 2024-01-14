@@ -1,0 +1,274 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "A dashboard to display the various autonomous systems a router is communicating with.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": 11206,
+  "graphTooltip": 0,
+  "id": 26,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Bandwidth"
+              },
+              {
+                "id": "unit",
+                "value": "bps"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.align"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "source_as"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "ASN"
+              },
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "PeeringDB",
+                    "url": "https://as${__data.fields[1]}.peeringdb.com"
+                  }
+                ]
+              },
+              {
+                "id": "custom.align"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "source_as_name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "AS Name"
+              },
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.align"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 30,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "links": [],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Bandwidth"
+          }
+        ]
+      },
+      "pluginVersion": "10.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "builder",
+          "expr": "topk(500, sum by(source_as, source_as_name) (rate(flow_receive_bytes_total{source_as!~\"4200005000|0|112|714|4775|6939|8283|13335|15169|24940|25091|30132|32934|35297|39614|41051|48200|58511|63949|200132|212635|212855|212895|393577|48581|3333|25152|197000|212271|57369|47498|34307|197540|212100|15133|202409|56393|35708|34927|8359|835|34872|1200|212317|3557|49245|24840|5927|202525|2149|29216|1508|207143|4200000099|4200000000|1299|174|14618|65513|13092|35132|44788|138800|3356|208722|20144|10886|21556|35492|12110|9808|397197|396566|15419|47777|10439|6768|48070|59642|42772|60011|59422|47692|35805|42487|4134|40220|38283|36947|36924|34772|3320|7018|30844|12025|271907|136754|9022|396613|139009|9674|12816|12552|3491|45498|200019|16175|210579|25192|7752|14907|52468|49800|24637|43766|43287|23201|396279|23889|47583|263779|8697|3477|17216|25003|8551|204471|47422|35819|30999|18001|29108|12400|211298|211612|206924|14780|3561|4816|18978|131392|30036|13004|12322|1213|35008|396574|4230|35432|23005|201206|18809|18734|12252|12713|8781|9063|13238|132335|203391|7195|211450|52341|12355|37497|263237|8708|17882|17494|3303|197071|36868|701|37468|204770|54316|140726|22356|21282|6461|15456|34785|396726|6453|19151|9498|213230|29287|8068|1273|12969|7642|12975|6895|6802|6263|133481|133111|12956|12874|852|786|45430|58601|5645|7470|59253|15706|49367|396746|29357|28885|28173|26794|2602|25467|195|17819|11170|11426|12129|1221|12301|13649|14061|15440|16010|17621|17709|20965|203217|20446|20712|208407|20940|63293|61461|6192|62183|62597|62695|63911|6509|6697|1680|6830|7342|7552|8365|8560|680|52320|50698|51225|51407|52863|53062|5416|5511|55943|56046|5617|57037|57811|58453|58466|58519|58678|4811|4837|46887|46844|46562|4637|45629|43708|41032|40793|396570|394353|37119|36752|34224|33843|3327|3257|2516|264668|27742|27884|27800|27773|269832|26615|265721|264127|263327|263073|25248|25019|24691|23724|237|23473|23470|23243|22822|22773|22724|224|21804|2152|21413|21277|21246|210021|209|19863\", hostname=~\"$host\", ip_family=\"6\"}[$__range]))) * 8",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{source_as}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Inbound ASNs",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {
+            "reducers": []
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "AS202427"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(flow_receive_bytes_total, hostname)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Host",
+        "multi": false,
+        "name": "host",
+        "options": [],
+        "query": {
+          "query": "label_values(flow_receive_bytes_total, hostname)",
+          "refId": "Prometheus-host-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "Network Traffic Flow Analysis - Possible Peers",
+  "uid": "a685996a-059a-4162-a7db-a8f192bffcc6",
+  "version": 52,
+  "weekStart": ""
+}

@@ -1,3 +1,5 @@
+{% set prometheus = app_grafana.prometheus %}
+
 # config file version
 apiVersion: 1
 
@@ -15,17 +17,17 @@ datasources:
     # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
     uid: prometheus
     # <string> url
-    url: "{{ app_grafana_prometheus_url }}"
+    url: "{{ prometheus.url }}"
     # <bool> enable/disable basic auth
-    basicAuth: "{{ app_grafana_prometheus_basicAuth }}"
+    basicAuth: "{{ prometheus.basicAuth }}"
     # <string> basic auth username
-    basicAuthUser: "{{ app_grafana_prometheus_username }}"
+    basicAuthUser: "{{ prometheus.username }}"
     # <bool> mark as default datasource. Max one per org
     isDefault:
     # <string> json object of data that will be encrypted.
     secureJsonData:
       # <string> basic auth password
-      basicAuthPassword: "{{ app_grafana_prometheus_password }}"
+      basicAuthPassword: "{{ prometheus.password }}"
     version: 1
     # <bool> allow users to edit datasources from the UI.
     editable: false

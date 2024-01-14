@@ -78,6 +78,13 @@
   when:
     result.exists == false
 
+- name: Copy grafana config
+  ansible.builtin.template:
+    src: "grafana.ini.j2"
+    dest: "/opt/tmp-grafana/config/grafana.ini"
+  when:
+    result.exists == false
+
 - name: Copy config files into grafana container
   shell: docker cp /opt/tmp-grafana/config/. grafana:/etc/grafana
   when:
