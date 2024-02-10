@@ -1236,8 +1236,8 @@
 ;total_stats_collector_interval_seconds = 1800
 
 #If both are set, basic auth will be required for the metrics endpoints.
-basic_auth_username = "{{ app_grafana.metrics.username }}"
-basic_auth_password = "{{ app_grafana.metrics.password }}"
+basic_auth_username = "{{ app_grafana_metrics_username }}"
+basic_auth_password = "{{ app_grafana_metrics_password }}"
 
 # Metrics environment info adds dimensions to the `grafana_environment_info` metric, which
 # can expose more information about the Grafana instance.

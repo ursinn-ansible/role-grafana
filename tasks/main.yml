@@ -1,41 +1,41 @@
 ---
 - name: Create grafana config volume
   community.docker.docker_volume:
-    name: grafana_config
+    name: "{{ app_grafana_docker_volume_config }}"
 
 - name: Create grafana data volume
   community.docker.docker_volume:
-    name: grafana_data
+    name: "{{ app_grafana_docker_volume_data }}"
 
-- name: Ensure grafana/grafana-enterprise image is pulled
+- name: Ensure grafana image is pulled
   community.docker.docker_image:
-    name: docker.io/grafana/grafana-enterprise
+    name: "{{ app_grafana_docker_image }}"
     source: pull
     force_source: yes
   register: pulled
 
 - name: Remove grafana container
   community.docker.docker_container:
-    name: grafana
+    name: "{{ app_grafana_docker_container }}"
     state: absent
   when: pulled.changed
 
 - name: Get infos on grafana container
   community.docker.docker_container_info:
-    name: grafana
+    name: "{{ app_grafana_docker_container }}"
   register: result
 
 - name: Create grafana container
   community.docker.docker_container:
-    image: docker.io/grafana/grafana-enterprise
+    image: "{{ app_grafana_docker_image }}"
     mounts:
-     - source: grafana_config
+     - source: "{{ app_grafana_docker_volume_config }}"
        target: /etc/grafana
-     - source: grafana_data
+     - source: "{{ app_grafana_docker_volume_data }}"
        target: /var/lib/grafana
-    name: grafana
+    name: "{{ app_grafana_docker_container }}"
     networks:
-     - name: app-network
+     - name: "{{ app_grafana_docker_network }}"
     restart_policy: unless-stopped
     state: started
   when:
@@ -45,7 +45,7 @@
 
 - name: Create tmp grafana directorys
   ansible.builtin.file:
-    path: "/opt/tmp-grafana/{{ item }}"
+    path: "{{ app_grafana_tmp_dir }}/{{ item }}"
     state: directory
   with_items:
     - "config/provisioning/datasources"
@@ -57,7 +57,7 @@
 - name: Copy grafana datasources providers
   ansible.builtin.template:
     src: "config/provisioning/datasources/{{ item }}.yaml.j2"
-    dest: "/opt/tmp-grafana/config/provisioning/datasources/{{ item }}.yaml"
+    dest: "{{ app_grafana_tmp_dir }}/config/provisioning/datasources/{{ item }}.yaml"
   with_items:
     - "prometheus"
     - "loki"
@@ -67,44 +67,44 @@
 - name: Copy grafana dashboard providers
   ansible.builtin.copy:
     src: "config/provisioning/dashboards/"
-    dest: "/opt/tmp-grafana/config/provisioning/dashboards/"
+    dest: "{{ app_grafana_tmp_dir }}/config/provisioning/dashboards/"
   when:
     result.exists == false
 
 - name: Copy grafana dashboard data
   ansible.builtin.copy:
     src: "data/dashboards/"
-    dest: "/opt/tmp-grafana/data/dashboards/"
+    dest: "{{ app_grafana_tmp_dir }}/data/dashboards/"
   when:
     result.exists == false
 
 - name: Copy grafana config
   ansible.builtin.template:
     src: "grafana.ini.j2"
-    dest: "/opt/tmp-grafana/config/grafana.ini"
+    dest: "{{ app_grafana_tmp_dir }}/config/grafana.ini"
   when:
     result.exists == false
 
 - name: Copy config files into grafana container
-  shell: docker cp /opt/tmp-grafana/config/. grafana:/etc/grafana
+  shell: docker cp {{ app_grafana_tmp_dir }}/config/. grafana:/etc/grafana
   when:
     result.exists == false
 
 - name: Copy data files into grafana container
-  shell: docker cp /opt/tmp-grafana/data/. grafana:/var/lib/grafana
+  shell: docker cp {{ app_grafana_tmp_dir }}/data/. grafana:/var/lib/grafana
   when:
     result.exists == false
 
 - name: Remove tmp grafana directory
   ansible.builtin.file:
-    path: /opt/tmp-grafana
+    path: "{{ app_grafana_tmp_dir }}"
     state: absent
   when:
     result.exists == false
 
 - name: Restart grafana container
   community.docker.docker_container:
-    name: grafana
+    name: "{{ app_grafana_docker_container }}"
     restart: yes
   when:
     result.exists == false
