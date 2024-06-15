@@ -8,14 +8,6 @@
     docker_network: '{{ app_grafana_docker_network }}'
     tmp_dir: '{{ app_grafana_tmp_dir }}'
 
-- name: Create grafana config volume
-  community.docker.docker_volume:
-    name: "{{ docker_volume_config }}"
-
-- name: Create grafana data volume
-  community.docker.docker_volume:
-    name: "{{ docker_volume_data }}"
-
 - name: Ensure image is pulled
   community.docker.docker_image:
     name: "{{ docker_image }}"
@@ -33,6 +25,20 @@
   community.docker.docker_container_info:
     name: "{{ docker_container }}"
   register: result
+
+- name: Create config volume
+  community.docker.docker_volume:
+    name: "{{ docker_volume_config }}"
+
+- name: Create data volume
+  community.docker.docker_volume:
+    name: "{{ docker_volume_data }}"
+
+- name: Create network
+  community.docker.docker_network:
+    name: "{{ docker_network }}"
+    driver_options:
+          com.docker.network.bridge.name: "br-{{ docker_network }}"
 
 - name: Create grafana container
   community.docker.docker_container:
