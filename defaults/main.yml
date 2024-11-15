@@ -1,5 +1,5 @@
 ---
-role_grafana_image: 'docker.io/grafana/grafana-enterprise'
+role_grafana_image: 'docker.io/grafana/grafana-enterprise:11.3.0'
 role_grafana_container: 'grafana'
 role_grafana_volume: 'grafana'
 role_grafana_network: 'app-network'
@@ -20,6 +20,8 @@ role_grafana_config_auth_generic_oauth_token_url: "https://foo.bar/login/oauth/a
 role_grafana_config_auth_generic_oauth_api_url: "https://foo.bar/user"
 role_grafana_config_auth_generic_oauth_role_attribute_path: ""
 
+role_grafana_config_server_root_url: ""
+
 role_grafana_datasource_provission_url: ""
 role_grafana_datasource_provission_user: "admin"
 role_grafana_datasource_provission_password: "admin"
@@ -28,3 +30,4 @@ role_grafana_datasources: {}
 role_grafana_datasources_basicAuth: {}
 
 role_grafana_dashboards: {}
+

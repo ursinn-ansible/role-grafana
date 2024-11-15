@@ -55,6 +55,8 @@
       GF_AUTH_GENERIC_OAUTH_TOKEN_URL: '{{ role_grafana_config_auth_generic_oauth_token_url }}'
       GF_AUTH_GENERIC_OAUTH_API_URL: '{{ role_grafana_config_auth_generic_oauth_api_url }}'
       GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: '{{ role_grafana_config_auth_generic_oauth_role_attribute_path }}'
+      #
+      GF_SERVER_ROOT_URL: '{{ role_grafana_config_server_root_url }}'
     name: "{{ docker_container }}"
     networks:
      - name: "{{ docker_network }}"
