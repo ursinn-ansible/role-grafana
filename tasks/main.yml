@@ -3,10 +3,8 @@
   set_fact:
     docker_image: '{{ role_grafana_image }}'
     docker_container: '{{ role_grafana_container }}'
-    docker_volume_config: '{{ role_grafana_volume }}_config'
-    docker_volume_data: '{{ role_grafana_volume }}_data'
+    docker_volume: '{{ role_grafana_volume }}_data'
     docker_network: '{{ role_grafana_network }}'
-    grafana_tmp_dir: '{{ role_grafana_tmp_dir }}'
 
 - name: Ensure image is pulled
   community.docker.docker_image:
@@ -26,13 +24,9 @@
     name: "{{ docker_container }}"
   register: result
 
-- name: Create config volume
+- name: Create volume
   community.docker.docker_volume:
-    name: "{{ docker_volume_config }}"
-
-- name: Create data volume
-  community.docker.docker_volume:
-    name: "{{ docker_volume_data }}"
+    name: "{{ docker_volume }}"
 
 - name: Create network
   community.docker.docker_network:
@@ -44,11 +38,23 @@
   community.docker.docker_container:
     image: "{{ docker_image }}"
     volumes:
-     - '{{ docker_volume_config }}:/etc/grafana:Z'
-     - '{{ docker_volume_config }}:/var/lib/grafana:Z'
+     - '{{ docker_volume }}:/var/lib/grafana:Z'
     env:
-      TZ: '{{ docker_tz }}'
-      LOG_LEVEL: 'debug'
+      GF_METRICS_BASIC_AUTH_USERNAME: '{{ role_grafana_config_metrics_basic_auth_username }}'
+      GF_METRICS_BASIC_AUTH_PASSWORD: '{{ role_grafana_config_metrics_basic_auth_password }}'
+      #
+      GF_AUTH_SIGNOUT_REDIRECT_URL: '{{ role_grafana_config_auth_signout_redirect_url }}'
+      GF_AUTH_OAUTH_AUTO_LOGIN: '{{ role_grafana_config_auth_oauth_auto_login }}'
+      #
+      GF_AUTH_GENERIC_OAUTH_ENABLED: '{{ role_grafana_config_auth_generic_oauth_enabled }}'
+      GF_AUTH_GENERIC_OAUTH_NAME: '{{ role_grafana_config_auth_generic_oauth_name }}'
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: '{{ role_grafana_config_auth_generic_oauth_client_id }}'
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: '{{ role_grafana_config_auth_generic_oauth_client_secret }}'
+      GF_AUTH_GENERIC_OAUTH_SCOPES: '{{ role_grafana_config_auth_generic_oauth_scopes }}'
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: '{{ role_grafana_config_auth_generic_oauth_auth_url }}'
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: '{{ role_grafana_config_auth_generic_oauth_token_url }}'
+      GF_AUTH_GENERIC_OAUTH_API_URL: '{{ role_grafana_config_auth_generic_oauth_api_url }}'
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: '{{ role_grafana_config_auth_generic_oauth_role_attribute_path }}'
     name: "{{ docker_container }}"
     networks:
      - name: "{{ docker_network }}"
@@ -59,68 +65,8 @@
     or
     result.exists == false
 
-- name: Create tmp grafana directorys
-  ansible.builtin.file:
-    path: "{{ grafana_tmp_dir }}/{{ item }}"
-    state: directory
-  with_items:
-    - "config/provisioning/datasources"
-    - "config/provisioning/dashboards"
-    - "data/dashboards"
-  when:
-    result.exists == false
+- name: provission datasources
+  ansible.builtin.include_tasks: datasources.yml
 
-- name: Copy grafana datasources providers
-  ansible.builtin.template:
-    src: "config/provisioning/datasources/{{ item }}.yaml.j2"
-    dest: "{{ grafana_tmp_dir }}/config/provisioning/datasources/{{ item }}.yaml"
-  with_items:
-    - "prometheus"
-    - "loki"
-  when:
-    result.exists == false
-
-- name: Copy grafana dashboard providers
-  ansible.builtin.copy:
-    src: "config/provisioning/dashboards/"
-    dest: "{{ grafana_tmp_dir }}/config/provisioning/dashboards/"
-  when:
-    result.exists == false
-
-- name: Copy grafana dashboard data
-  ansible.builtin.copy:
-    src: "data/dashboards/"
-    dest: "{{ grafana_tmp_dir }}/data/dashboards/"
-  when:
-    result.exists == false
-
-- name: Copy grafana config
-  ansible.builtin.template:
-    src: "grafana.ini.j2"
-    dest: "{{ grafana_tmp_dir }}/config/grafana.ini"
-  when:
-    result.exists == false
-
-- name: Copy config files into grafana container
-  shell: docker cp {{ grafana_tmp_dir }}/config/. {{ docker_container }}:/etc/grafana
-  when:
-    result.exists == false
-
-- name: Copy data files into grafana container
-  shell: docker cp {{ grafana_tmp_dir }}/data/. {{ docker_container }}:/var/lib/grafana
-  when:
-    result.exists == false
-
-- name: Remove tmp directory
-  ansible.builtin.file:
-    path: "{{ grafana_tmp_dir }}"
-    state: absent
-  when:
-    result.exists == false
-
-- name: Restart container
-  community.docker.docker_container:
-    name: "{{ docker_container }}"
-    restart: yes
-  when:
-    result.exists == false
+- name: provission dashboards
+  ansible.builtin.include_tasks: dashboards.yml
