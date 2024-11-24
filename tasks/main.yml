@@ -66,9 +66,3 @@
     pulled.changed
     or
     result.exists == false
-
-- name: provission datasources
-  ansible.builtin.include_tasks: datasources.yml
-
-- name: provission dashboards
-  ansible.builtin.include_tasks: dashboards.yml

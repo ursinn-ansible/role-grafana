@@ -26,12 +26,6 @@ Docker Image: https://hub.docker.com/r/grafana/grafana-enterprise
 | role_grafana_config_auth_generic_oauth_token_url | https://foo.bar/login/oauth/access_token |
 | role_grafana_config_auth_generic_oauth_api_url | https://foo.bar/user |
 | role_grafana_config_auth_generic_oauth_role_attribute_path | |
-| role_grafana_datasource_provission_url | |
-| role_grafana_datasource_provission_user | admin |
-| role_grafana_datasource_provission_password | admin |
-| role_grafana_datasources | |
-| role_grafana_datasources_basicAuth | |
-| role_grafana_dashboards | |
 
 ## License
 
