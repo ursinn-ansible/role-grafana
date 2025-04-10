@@ -1,0 +1,9 @@
+---
+- name: Import Grafana dashboards
+  community.grafana.grafana_dashboard:
+    grafana_url: '{{ role_grafana_datasource_provission_url }}'
+    grafana_user: '{{ role_grafana_datasource_provission_user }}'
+    grafana_password: '{{ role_grafana_datasource_provission_password }}'
+    folder: '{{ item.value.folder }}'
+    dashboard_url: '{{ item.value.url }}'
+  with_dict: "{{ role_grafana_dashboards }}"

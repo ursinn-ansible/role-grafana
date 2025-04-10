@@ -1,0 +1,23 @@
+---
+
+- name: create datasource
+  community.grafana.grafana_datasource:
+    grafana_url: '{{ role_grafana_datasource_provission_url }}'
+    grafana_user: '{{ role_grafana_datasource_provission_user }}'
+    grafana_password: '{{ role_grafana_datasource_provission_password }}'
+    name: '{{ item.key }}'
+    ds_type: '{{ item.value.type }}'
+    ds_url: '{{ item.value.url }}'
+  with_dict: "{{ role_grafana_datasources }}"
+
+- name: create datasource with basicAuth
+  community.grafana.grafana_datasource:
+    grafana_url: '{{ role_grafana_datasource_provission_url }}'
+    grafana_user: '{{ role_grafana_datasource_provission_user }}'
+    grafana_password: '{{ role_grafana_datasource_provission_password }}'
+    name: '{{ item.key }}'
+    ds_type: '{{ item.value.type }}'
+    ds_url: '{{ item.value.url }}'
+    basic_auth_user: '{{ item.value.basicAuthUser }}'
+    basic_auth_password: '{{ item.value.basicAuthPassword }}'
+  with_dict: "{{ role_grafana_datasources_basicAuth }}"
