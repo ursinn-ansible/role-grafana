@@ -62,7 +62,7 @@
      - name: "{{ docker_network }}"
     restart_policy: unless-stopped
     state: started
-  when: 
+  when:
     pulled.changed
     or
     result.exists == false
