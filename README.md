@@ -9,7 +9,7 @@ Docker Image: https://hub.docker.com/r/grafana/grafana-enterprise
 
 | Option | Default Value |
 | ---- | ---- |
-| role_grafana_image | docker.io/grafana/grafana-enterprise |
+| role_grafana_image | docker.io/grafana/grafana-enterprise:12.2 |
 | role_grafana_container | grafana |
 | role_grafana_volume | grafana |
 | role_grafana_network | app-network |
